@@ -83,12 +83,14 @@ public:
         ++_M_finish;
     }
 
-    void pop_back() {
+    value_type pop_back() {
         if (empty()) throw;
         --_M_finish;
+        value_type tmp = *(_M_start + _M_finish);
+        _shrink();
+        return tmp;
     }
-
-
+    // stl pop_back will call object's deconstructor
 
 protected:
     void _M_fill_initialize(size_type _n) {
@@ -97,13 +99,13 @@ protected:
         _M_end_of_storage = _M_start + _n;
     }
 
-    void _reallocate(difference_type _n);
+    void _reallocate(size_type _n);
     void _shrink() {
         if (size() > capacity() / 4) return;
         _Tp* oldV = _M_start;
-        difference_type newC = capacity() / 2;
+        size_type newC = capacity() / 2;
         _M_start = new _Tp[newC];
-        for (difference_type i = 0; i < size(); ++i) *(_M_start + i) = oldV[i];
+        for (size_type i = 0; i < size(); ++i) *(_M_start + i) = oldV[i];
         _M_finish = _M_start + size();
         _M_end_of_storage = _M_start + newC;
         delete[] oldV;
@@ -113,9 +115,9 @@ protected:
 };
 
 template <typename _Tp>
-void Vector<_Tp>::_reallocate(difference_type _n) {
+void Vector<_Tp>::_reallocate(size_type _n) {
     _Tp* oldV = _M_start;
-    difference_type numToCopy = _n < size() ? _n : size();
+    size_type numToCopy = _n < size() ? _n : size();
 
     _Tp* newV = new _Tp[_n];
     for (size_type i = 0; i < numToCopy; i++) newV[i] = *(_M_start + i);

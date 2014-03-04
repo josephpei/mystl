@@ -55,7 +55,7 @@ inline void _Destroy(_Tp* __pointer) {
 }
 
 template <typename _Tp>
-inline _Tp* __addressof(_Tp& __r) throw() {
+inline _Tp* __Addressof(_Tp& __r) throw() {
     return reinterpret_cast<_Tp*>(
         &const_cast<char&>(reinterpret_cast<const volatile char&>(__r)));
 }
@@ -68,7 +68,7 @@ struct _Uninitialized_copy {
                                          _ForwardIterator _result) {
         _ForwardIterator _cur = _result;
         for (; _first != _last; ++_first, ++_cur)
-            numb::_Construct(numb::__addressof(*_cur), *_first);
+            numb::_Construct(numb::__Addressof(*_cur), *_first);
         return _cur;
     }
 };
