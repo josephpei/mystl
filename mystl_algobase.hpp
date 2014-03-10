@@ -56,7 +56,7 @@ inline _Tp* __Addressof(_Tp& __r) throw() {
     return reinterpret_cast<_Tp*>(
         &const_cast<char&>(reinterpret_cast<const volatile char&>(__r)));
 }
-
+/*
 template <bool _TrivialValueType>
 struct _Uninitialized_copy {
     template <typename _InputIterator, typename _ForwardIterator>
@@ -92,6 +92,7 @@ inline _ForwardIterator Uninitialized_copy(_InputIterator _first,
          __is_trivial(_ValueType2))>::_uninit_copy(_first, _last, _result);
 }
 //__is_trivial is a compiler intrinsic provided by G++
+*/
 
 template <typename _Arg, typename _Result>
 struct Unary_function {
