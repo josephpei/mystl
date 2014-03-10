@@ -151,7 +151,7 @@ public:
         _head->_prev = _head;
         _head->_next = _head;
         _head->_data = value_type();
-        for (Const_iterator _iter = _rhs.cbegin(); _iter != _rhs.cend();
+        for (Const_iterator _iter = _rhs.begin(); _iter != _rhs.end();
              ++_iter)
             push_back(*_iter);
     }
@@ -166,11 +166,11 @@ public:
 
     Iterator end() throw() { return Iterator(_head); }
 
-    Const_iterator cbegin() const throw() {
+    Const_iterator begin() const throw() {
         return Const_iterator(_head->_next);
     }
 
-    Const_iterator cend() const throw() { return Const_iterator(_head); }
+    Const_iterator end() const throw() { return Const_iterator(_head); }
 
     reference front() { return *begin(); }
 
@@ -218,6 +218,20 @@ public:
         value_type _tmp = *end();
         _M_erase(--end());
 
+        return _tmp;
+    }
+
+    value_type erase(Iterator _it) {
+        value_type _tmp = *_it;
+        _M_erase(_it);
+        return _tmp;
+    }
+
+    value_type erase(difference_type _n) {
+        Iterator _it = begin();
+        Advance(_it, _n);
+        value_type _tmp = *_it;
+        _M_erase(_it);
         return _tmp;
     }
 

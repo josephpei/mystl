@@ -25,6 +25,8 @@ int main ()
         IV.push_back(i);
     }
     numb::Vector<int> IV2(IV);
+    IV.erase(0);
+    IV2.insert(25, 100);
 
     std::ostream_iterator<int> out_it(std::cout, " ");
 

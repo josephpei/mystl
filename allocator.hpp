@@ -1,7 +1,7 @@
 #ifndef _N_MYSTL_ALLOCATOR_H
 #define _N_MYSTL_ALLOCATOR_H
 #include <new>
-#include <cstddef>
+#include <stddef.h>
 
 namespace numb {
 template <typename _Tp>

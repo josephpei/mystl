@@ -24,18 +24,15 @@ inline const _Tp& Max(const _Tp& a, const _Tp& b, _Compare comp) {
 }
 
 template <typename _Tp>
-inline void Swap(_Tp& _a, _Tp& _b)
-{
+inline void Swap(_Tp& _a, _Tp& _b) {
     _Tp _tmp = _a;
     _a = _b;
     _b = _tmp;
 }
 
-template<typename _Tp, size_t _Nm>
-inline void Swap(_Tp (&_a)[_Nm], _Tp (&_b)[_Nm])
-{
-    for (size_t _n = 0; _n < _Nm; ++_n)
-        swap(_a[_n], _b[_n]);
+template <typename _Tp, size_t _Nm>
+inline void Swap(_Tp (&_a)[_Nm], _Tp (&_b)[_Nm]) {
+    for (size_t _n = 0; _n < _Nm; ++_n) swap(_a[_n], _b[_n]);
 }
 
 template <typename _InIter, typename _OutIter>
@@ -96,7 +93,30 @@ inline _ForwardIterator Uninitialized_copy(_InputIterator _first,
 }
 //__is_trivial is a compiler intrinsic provided by G++
 
+template <typename _Arg, typename _Result>
+struct Unary_function {
+    typedef _Arg argument_type;
 
+    typedef _Result result_type;
+};
 
+template <typename _Arg1, typename _Arg2, typename _Result>
+struct Binary_function {
+    typedef _Arg1 first_argument_type;
+
+    typedef _Arg2 second_argument_type;
+
+    typedef _Result result_type;
+};
+
+template <typename _Tp>
+struct Greater : public Binary_function<_Tp, _Tp, bool> {
+    bool operator()(const _Tp& _x, const _Tp& _y) const { return _x > _y; }
+};
+
+template <typename _Tp>
+struct Less : public Binary_function<_Tp, _Tp, bool> {
+    bool operator()(const _Tp& _x, const _Tp& _y) const { return _x < _y; }
+};
 }
 #endif
