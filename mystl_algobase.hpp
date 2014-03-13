@@ -119,5 +119,28 @@ template <typename _Tp>
 struct Less : public Binary_function<_Tp, _Tp, bool> {
     bool operator()(const _Tp& _x, const _Tp& _y) const { return _x < _y; }
 };
+
+//rb tree, set
+template <typename _Tp>
+struct _Identity : public Unary_function<_Tp, _Tp>
+{
+    _Tp& operator()(_Tp& _x) const
+    { return _x; }
+
+    const _Tp& operator()(const _Tp& _x) const
+    { return _x; }
+};
+
+//rb tree, map
+template <typename _Pair>
+struct _Select1st : public Unary_function<_Pair, typename _Pair::first_type>
+{
+    typename _Pair::first_type& operator()(_Pair& _x) const
+    { return _x.first; }
+
+    const typename _Pair::first_type& operator()(const _Pair& _x) const
+    { return _x.first; }
+};
+
 }
 #endif

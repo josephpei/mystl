@@ -95,8 +95,7 @@ public:
 
     void push_back(const value_type& _x) {
         if (_M_finish == _M_end_of_storage) _reallocate(2 * Max(size(), size_type(1)));
-        *_M_finish = _x;
-        ++_M_finish;
+        *_M_finish++ = _x;
     }
 
     value_type pop_back() {
@@ -107,6 +106,12 @@ public:
         return tmp;
     }
     // stl pop_back will call object's deconstructor
+
+    void assign(size_type _n, const value_type& _x) {
+        if (_n > capacity()) throw;
+		for (size_type i = 0; i < _n; ++i)
+            *_M_finish++ = _x;
+	}
 
     void insert(size_type _pos, value_type _x) {
         if (_pos <= 0 || _pos >= size())
