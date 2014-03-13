@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     std::cout << s1.find(6) << std::endl;
     std::cout << s1.erase(5) << std::endl;
     numb::Set<int>::Iterator it = s1.begin();
-    std::cout << "Set: \n";
+    std::cout << "Set1: \n";
     for (; it != s1.end(); ++it)
         std::cout << *it << std::endl;
 

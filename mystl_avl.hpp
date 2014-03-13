@@ -1,5 +1,6 @@
-#ifndef _MYSTL_BST_H
-#define _MYSTL_BST_H
+#ifndef _MYSTL_AVL_H
+#define _MYSTL_AVL_H
+
 #include "mystl_algobase.hpp"
 #include "mystl_iterator_base.hpp"
 #include "mystl_pair.hpp"
@@ -7,23 +8,24 @@
 namespace numb {
 
 template <typename _Val>
-struct _bst_node {
-    typedef _bst_node* _Link_type;
-    typedef const _bst_node* _Const_Link_type;
+struct _avl_node {
+    typedef _avl_node* _Link_type;
+    typedef const _avl_node* _Const_Link_type;
 
     _Link_type _parent;
     _Link_type _left;
     _Link_type _right;
     _Val _value_field;
+    int _height;
 
-    _bst_node() {}
-    explicit _bst_node(_Val _x, _Link_type _p = NULL, _Link_type _l = NULL,
+    _avl_node() {}
+    explicit _avl_node(_Val _x, _Link_type _p = NULL, _Link_type _l = NULL,
                        _Link_type _r = NULL)
-        : _value_field(_x), _parent(_p), _left(_l), _right(_r) {}
+        : _value_field(_x), _parent(_p), _left(_l), _right(_r), _height(0) {}
 };
 
 template <typename _Tp>
-struct _BST_iterator {
+struct _AVL_iterator {
     typedef _Tp value_type;
     typedef _Tp& reference;
     typedef _Tp* pointer;
@@ -31,38 +33,38 @@ struct _BST_iterator {
     typedef Bidirectional_iterator_tag iterator_category;
     typedef ptrdiff_t difference_type;
 
-    typedef _BST_iterator<_Tp> _Self;
-    typedef _bst_node<_Tp>* _Link_type;
+    typedef _AVL_iterator<_Tp> _Self;
+    typedef _avl_node<_Tp>* _Link_type;
 
     _Link_type _node;
 
-    _BST_iterator() : _node() {}
+    _AVL_iterator() : _node() {}
 
-    explicit _BST_iterator(_Link_type _x) : _node(_x) {}
+    explicit _AVL_iterator(_Link_type _x) : _node(_x) {}
 
     reference operator*() const { return _node->_value_field; }
 
     pointer operator->() const { return __Addressof(_node->_value_field); }
 
     _Self& operator++() {
-        _node = _bst_increment(_node);
+        _node = _avl_increment(_node);
         return *this;
     }
 
     _Self operator++(int) {
         _Self _tmp = *this;
-        _node = _bst_increment(_node);
+        _node = _avl_increment(_node);
         return _tmp;
     }
 
     _Self& operator--() {
-        _node = _bst_decrement(_node);
+        _node = _avl_decrement(_node);
         return *this;
     }
 
     _Self operator--(int) {
         _Self _tmp = *this;
-        _node = _bst_decrement(_node);
+        _node = _avl_decrement(_node);
         return _tmp;
     }
 
@@ -70,7 +72,7 @@ struct _BST_iterator {
 
     bool operator!=(const _Self& _x) const { return _node != _x._node; }
 
-    _Link_type _bst_increment(_Link_type _x) throw() {
+    _Link_type _avl_increment(_Link_type _x) throw() {
         if (_x->_right != NULL) {
             _x = _x->_right;
             while (_x->_left != NULL) _x = _x->_left;
@@ -85,7 +87,7 @@ struct _BST_iterator {
         }
     }
 
-    _Link_type _bst_decrement(_Link_type _x) throw() {
+    _Link_type _avl_decrement(_Link_type _x) throw() {
         if (_x->_left != NULL) {
             _x = _x->_left;
             while (_x->_right != NULL) _x = _x->_right;
@@ -102,26 +104,26 @@ struct _BST_iterator {
 };
 
 template <typename _Tp>
-struct _BST_const_iterator {
+struct _AVL_const_iterator {
     typedef _Tp value_type;
     typedef _Tp& reference;
     typedef _Tp* pointer;
 
-    typedef _BST_iterator<_Tp>* BIterator;
+    typedef _AVL_iterator<_Tp>* BIterator;
 
     typedef Bidirectional_iterator_tag iterator_category;
     typedef ptrdiff_t difference_type;
 
-    typedef _BST_const_iterator<_Tp> _Self;
-    typedef _bst_node<_Tp>* _Link_type;
+    typedef _AVL_const_iterator<_Tp> _Self;
+    typedef _avl_node<_Tp>* _Link_type;
 
     _Link_type _node;
 
-    _BST_const_iterator() : _node() {}
+    _AVL_const_iterator() : _node() {}
 
-    explicit _BST_const_iterator(_Link_type _x) : _node(_x) {}
+    explicit _AVL_const_iterator(_Link_type _x) : _node(_x) {}
 
-    //explicit _BST_const_iterator(const BIterator& _it) : _node(_it._node) {}
+    //explicit _AVL_const_iterator(const BIterator& _it) : _node(_it._node) {}
 
     //BIterator _const_cast() const
     //{ return BIterator(const_cast<typename BIterator::_Link_type>(_node)); }
@@ -131,24 +133,24 @@ struct _BST_const_iterator {
     pointer operator->() const { return __Addressof(_node->_value_field); }
 
     _Self& operator++() {
-        _node = _bst_increment(_node);
+        _node = _avl_increment(_node);
         return *this;
     }
 
     _Self operator++(int) {
         _Self _tmp = *this;
-        _node = _bst_increment(_node);
+        _node = _avl_increment(_node);
         return _tmp;
     }
 
     _Self& operator--() {
-        _node = _bst_decrement(_node);
+        _node = _avl_decrement(_node);
         return *this;
     }
 
     _Self operator--(int) {
         _Self _tmp = *this;
-        _node = _bst_decrement(_node);
+        _node = _avl_decrement(_node);
         return _tmp;
     }
 
@@ -156,7 +158,7 @@ struct _BST_const_iterator {
 
     bool operator!=(const _Self& _x) const { return _node != _x._node; }
 
-    _Link_type _bst_increment(_Link_type _x) throw() {
+    _Link_type _avl_increment(_Link_type _x) throw() {
         if (_x->_right != NULL) {
             _x = _x->_right;
             while (_x->_left != NULL) _x = _x->_left;
@@ -171,7 +173,7 @@ struct _BST_const_iterator {
         }
     }
 
-    _Link_type _bst_decrement(_Link_type _x) throw() {
+    _Link_type _avl_decrement(_Link_type _x) throw() {
         if (_x->_left != NULL) {
             _x = _x->_left;
             while (_x->_right != NULL) _x = _x->_right;
@@ -188,19 +190,19 @@ struct _BST_const_iterator {
 };
 
 template <typename _Val>
-inline bool operator==(const _BST_iterator<_Val>& _x,
-                       const _BST_iterator<_Val>& _y) {
+inline bool operator==(const _AVL_iterator<_Val>& _x,
+                       const _AVL_iterator<_Val>& _y) {
     return _x._node == _y._node;
 }
 
 template <typename _Val>
-inline bool operator!=(const _BST_iterator<_Val>& _x,
-                       const _BST_iterator<_Val>& _y) {
+inline bool operator!=(const _AVL_iterator<_Val>& _x,
+                       const _AVL_iterator<_Val>& _y) {
     return _x._node != _y._node;
 }
 
 template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare>
-class _BST {
+class _AVL {
 public:
     typedef _Key key_type;
     typedef _Val value_type;
@@ -208,13 +210,13 @@ public:
     typedef const value_type* const_pointer;
     typedef value_type& reference;
     typedef const value_type& const_reference;
-    typedef _bst_node<_Val>* _Link_type;
-    typedef const _bst_node<_Val>* _Const_Link_type;
+    typedef _avl_node<_Val>* _Link_type;
+    typedef const _avl_node<_Val>* _Const_Link_type;
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
 
-    typedef _BST_iterator<value_type> Iterator;
-    typedef _BST_const_iterator<value_type> Const_iterator;
+    typedef _AVL_iterator<value_type> Iterator;
+    typedef _AVL_const_iterator<value_type> Const_iterator;
 
 private:
     size_type _node_count;
@@ -228,6 +230,109 @@ protected:
 
     static const_reference _S_value(_Const_Link_type _x) {
         return _x->_value_field;
+    }
+
+    int _height(_Const_Link_type _x) const
+    {
+        return _x == NULL ? -1 : _x->_height;
+    }
+
+    void _setHeight(_Link_type _x)
+    {
+        int _hl = _height(_x->_left);
+        int _hr = _height(_x->_right);
+        _x->_height = 1 + Max(_hl, _hr);
+    }
+
+    bool _isBalance(_Const_Link_type _x) const
+    {
+        int _bal = _height(_x->_left) - _height(_x->_right);
+        return ((-1 <= _bal) && (_bal <= 1));
+    }
+
+    _Link_type _tallGrandchild(_Const_Link_type _x) const
+    {
+        if (_height(_x->_left) >= _height(_x->_right)) {
+            if (_height(_x->_left->_left) >= _height(_x->_left->_right))
+                return _x->_left->_left;
+            else
+                return _x->_left->_right;
+        }
+        else {
+            if (_height(_x->_right->_right) >= _height(_x->_right->_left))
+                return _x->_right->_right;
+            else
+                return _x->_right->_left;
+        }
+    }
+
+    void _rebalance(const _Link_type& _x)
+    {
+		_Link_type _y = _x;
+        while(_y != _root) {
+            _y = _y->_parent;
+            _setHeight(_y);
+            if (!_isBalance(_y)) {
+                _Link_type _z = _tallGrandchild(_y);
+                _y = _restructure(_z);
+                _setHeight(_y->_left);
+                _setHeight(_y->_right);
+                _setHeight(_y);
+            }
+        }
+    }
+
+    _Link_type _restructure(_Link_type& _x)
+    {
+		_Link_type left, middle, right;
+		_Link_type t0, t1, t2, t3;
+        _Link_type parent = _x->_parent;
+        _Link_type gp = parent->_parent;
+
+        if (_x == _x->_parent->_left && parent == parent->_parent->_left) {
+			left = _x;  middle = parent;  right = gp;
+			t0 = _x->_left;  t1 = _x->_right; t2 = parent->_right;  t3 = gp->_right;
+        }
+        else if (_x == _x->_parent->_left && parent == parent->_parent->_right) {
+			left = gp;  middle = _x;  right = parent;
+			t0 = gp->_left;  t1 = _x->_left;  t2 = _x->_right;  t3 = parent->_right;
+        }
+        else if(_x == _x->_parent->_right && parent == parent->_parent->_left) {
+			left = parent;  middle = _x;  right = gp;
+			t0 = parent->_left; t1 = _x->_left; t2 = _x->_right;  t3 = gp->_right;
+        }
+        else {
+			left = gp;  middle = parent;  right = _x;
+			t0 = gp->_left;  t1 = parent->_left;  t2 = _x->_left;  t3 = _x->_right;
+        }
+		if (gp == _root)
+			_root = middle;
+		else if (gp == gp->_parent->_left)
+			gp->_parent->_left = middle;
+		else
+			gp->_parent->_right = middle;
+		middle->_parent = gp->_parent;
+		return _connect34(left, middle, right, t0, t1, t2, t3);
+    }
+
+    _Link_type _connect34(_Link_type& left, _Link_type& middle, _Link_type& right,
+            _Link_type& t0, _Link_type& t1, _Link_type& t2, _Link_type& t3)
+    {
+        left->_left = t0;
+        if (t0) t0->_parent = left;
+        left->_right = t1;
+        if (t1) t1->_parent = left;
+
+        right->_left = t2;
+        if (t2) t2->_parent = right;
+        right->_right = t3;
+        if (t3) t3->_parent = right;
+
+        middle->_left = left;
+        left->_parent = middle;
+        middle->_right = right;
+        right->_parent = middle;
+        return middle;
     }
 
     _Link_type _find(const key_type& _x)
@@ -268,13 +373,13 @@ protected:
     }
 
 public:
-    _BST()
+    _AVL()
         : _node_count(0),
           _root(NULL),
           key_comp(_Compare()) {}
-    ~_BST() { _destroy(_root); }
+    ~_AVL() { _destroy(_root); }
 
-    _BST(const _BST& _rhs)
+    _AVL(const _AVL& _rhs)
     {
         _node_count = 0;
         _root = NULL;
@@ -283,15 +388,15 @@ public:
             _insert_unique(*_it);
     }
 
-    _BST& operator=(const _BST& _rhs)
+    _AVL& operator=(const _AVL& _rhs)
     {
-        _BST _copy = _rhs;
+        _AVL _copy = _rhs;
         numb::Swap(*this, _copy);
         return *this;
     }
 
     template <typename _InputIterator>
-    _BST(_InputIterator _first, _InputIterator _last)
+    _AVL(_InputIterator _first, _InputIterator _last)
     {
         _node_count = 0;
         _root = NULL;
@@ -333,7 +438,7 @@ public:
             else
                 return Make_pair(Iterator(NULL), false);
         }
-        _Link_type _cur = new _bst_node<value_type>(_x, _hot);
+        _Link_type _cur = new _avl_node<value_type>(_x, _hot);
         if (_hot == NULL)
             _root = _cur;
         else {
@@ -342,6 +447,8 @@ public:
             else
                 _hot->_right = _cur;
         }
+        _setHeight(_cur);
+        _rebalance(_cur);
         Iterator _iter(_cur);
         ++_node_count;
         return Make_pair(_iter, true);
@@ -378,6 +485,7 @@ public:
         if (_real != _del)
             _del->_value_field = _real->_value_field;
 
+        _rebalance(_del->_parent);
         value_type _tmp = _S_value(_del);
         delete _real;
         --_node_count;
@@ -393,4 +501,7 @@ public:
     Iterator _insert_equal(const value_type& _x);
 };
 }
+
+
+
 #endif

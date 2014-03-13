@@ -1,6 +1,6 @@
 #ifndef _MYSTL_SET_H
 #define _MYSTL_SET_H
-#include "mystl_bst.hpp"
+#include "mystl_avl.hpp"
 
 namespace numb {
 template <typename _Key, typename _Compare = Less<_Key> >
@@ -12,7 +12,7 @@ class Set {
         typedef _Compare value_compare;
 
     private:
-        typedef _BST<key_type, value_type, numb::_Identity<value_type>, key_compare> _Rep_type;
+        typedef _AVL<key_type, value_type, numb::_Identity<value_type>, key_compare> _Rep_type;
         _Rep_type _M_t;
 
     public:
@@ -27,6 +27,11 @@ class Set {
         typedef typename _Rep_type::difference_type difference_type;
 
         Set() : _M_t() { }
+
+        Set(const Set& _x) : _M_t(_x._M_t) {}
+
+        Set& operator=(const Set& _x)
+        { _M_t = _x._M_t; return *this; }
 
         Iterator begin()
         { return _M_t.begin(); }
