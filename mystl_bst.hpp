@@ -286,8 +286,15 @@ public:
     _BST& operator=(const _BST& _rhs)
     {
         _BST _copy = _rhs;
-        numb::Swap(*this, _copy);
+        swap(_copy);
         return *this;
+    }
+
+    void swap(_BST& _rhs) {
+        using numb::Swap;
+        Swap(_node_count, _rhs._node_count);
+        Swap(_root, _rhs._root);
+        Swap(key_comp, _rhs.key_comp);
     }
 
     template <typename _InputIterator>
@@ -312,7 +319,7 @@ public:
         _Link_type _leftmost = _root;
         while (_leftmost->_left != NULL)
             _leftmost = _leftmost->_left;
-        return Const_iterator(static_cast<_Const_Link_type>(_leftmost));
+        return Const_iterator(_leftmost);
     }
 
     Const_iterator end() const throw() { return Const_iterator(NULL); }

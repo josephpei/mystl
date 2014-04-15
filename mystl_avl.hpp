@@ -123,9 +123,9 @@ struct _AVL_const_iterator {
 
     explicit _AVL_const_iterator(_Link_type _x) : _node(_x) {}
 
-    //explicit _AVL_const_iterator(const BIterator& _it) : _node(_it._node) {}
+    // explicit _AVL_const_iterator(const BIterator& _it) : _node(_it._node) {}
 
-    //BIterator _const_cast() const
+    // BIterator _const_cast() const
     //{ return BIterator(const_cast<typename BIterator::_Link_type>(_node)); }
 
     reference operator*() const { return _node->_value_field; }
@@ -232,33 +232,28 @@ protected:
         return _x->_value_field;
     }
 
-    int _height(_Const_Link_type _x) const
-    {
+    int _height(_Const_Link_type _x) const {
         return _x == NULL ? -1 : _x->_height;
     }
 
-    void _setHeight(_Link_type _x)
-    {
+    void _setHeight(_Link_type _x) {
         int _hl = _height(_x->_left);
         int _hr = _height(_x->_right);
         _x->_height = 1 + Max(_hl, _hr);
     }
 
-    bool _isBalance(_Const_Link_type _x) const
-    {
+    bool _isBalance(_Const_Link_type _x) const {
         int _bal = _height(_x->_left) - _height(_x->_right);
         return ((-1 <= _bal) && (_bal <= 1));
     }
 
-    _Link_type _tallGrandchild(_Const_Link_type _x) const
-    {
+    _Link_type _tallGrandchild(_Const_Link_type _x) const {
         if (_height(_x->_left) >= _height(_x->_right)) {
             if (_height(_x->_left->_left) >= _height(_x->_left->_right))
                 return _x->_left->_left;
             else
                 return _x->_left->_right;
-        }
-        else {
+        } else {
             if (_height(_x->_right->_right) >= _height(_x->_right->_left))
                 return _x->_right->_right;
             else
@@ -266,10 +261,9 @@ protected:
         }
     }
 
-    void _rebalance(const _Link_type& _x)
-    {
-		_Link_type _y = _x;
-        while(_y != _root) {
+    void _rebalance(const _Link_type& _x) {
+        _Link_type _y = _x;
+        while (_y != _root) {
             _y = _y->_parent;
             _setHeight(_y);
             if (!_isBalance(_y)) {
@@ -282,42 +276,60 @@ protected:
         }
     }
 
-    _Link_type _restructure(_Link_type& _x)
-    {
-		_Link_type left, middle, right;
-		_Link_type t0, t1, t2, t3;
+    _Link_type _restructure(_Link_type& _x) {
+        _Link_type left, middle, right;
+        _Link_type t0, t1, t2, t3;
         _Link_type parent = _x->_parent;
         _Link_type gp = parent->_parent;
 
         if (_x == _x->_parent->_left && parent == parent->_parent->_left) {
-			left = _x;  middle = parent;  right = gp;
-			t0 = _x->_left;  t1 = _x->_right; t2 = parent->_right;  t3 = gp->_right;
+            left = _x;
+            middle = parent;
+            right = gp;
+            t0 = _x->_left;
+            t1 = _x->_right;
+            t2 = parent->_right;
+            t3 = gp->_right;
+        } else if (_x == _x->_parent->_left &&
+                   parent == parent->_parent->_right) {
+            left = gp;
+            middle = _x;
+            right = parent;
+            t0 = gp->_left;
+            t1 = _x->_left;
+            t2 = _x->_right;
+            t3 = parent->_right;
+        } else if (_x == _x->_parent->_right &&
+                   parent == parent->_parent->_left) {
+            left = parent;
+            middle = _x;
+            right = gp;
+            t0 = parent->_left;
+            t1 = _x->_left;
+            t2 = _x->_right;
+            t3 = gp->_right;
+        } else {
+            left = gp;
+            middle = parent;
+            right = _x;
+            t0 = gp->_left;
+            t1 = parent->_left;
+            t2 = _x->_left;
+            t3 = _x->_right;
         }
-        else if (_x == _x->_parent->_left && parent == parent->_parent->_right) {
-			left = gp;  middle = _x;  right = parent;
-			t0 = gp->_left;  t1 = _x->_left;  t2 = _x->_right;  t3 = parent->_right;
-        }
-        else if(_x == _x->_parent->_right && parent == parent->_parent->_left) {
-			left = parent;  middle = _x;  right = gp;
-			t0 = parent->_left; t1 = _x->_left; t2 = _x->_right;  t3 = gp->_right;
-        }
-        else {
-			left = gp;  middle = parent;  right = _x;
-			t0 = gp->_left;  t1 = parent->_left;  t2 = _x->_left;  t3 = _x->_right;
-        }
-		if (gp == _root)
-			_root = middle;
-		else if (gp == gp->_parent->_left)
-			gp->_parent->_left = middle;
-		else
-			gp->_parent->_right = middle;
-		middle->_parent = gp->_parent;
-		return _connect34(left, middle, right, t0, t1, t2, t3);
+        if (gp == _root)
+            _root = middle;
+        else if (gp == gp->_parent->_left)
+            gp->_parent->_left = middle;
+        else
+            gp->_parent->_right = middle;
+        middle->_parent = gp->_parent;
+        return _connect34(left, middle, right, t0, t1, t2, t3);
     }
 
-    _Link_type _connect34(_Link_type& left, _Link_type& middle, _Link_type& right,
-            _Link_type& t0, _Link_type& t1, _Link_type& t2, _Link_type& t3)
-    {
+    _Link_type _connect34(_Link_type& left, _Link_type& middle,
+                          _Link_type& right, _Link_type& t0, _Link_type& t1,
+                          _Link_type& t2, _Link_type& t3) {
         left->_left = t0;
         if (t0) t0->_parent = left;
         left->_right = t1;
@@ -335,8 +347,7 @@ protected:
         return middle;
     }
 
-    _Link_type _find(const key_type& _x)
-    {
+    _Link_type _find(const key_type& _x) const {
         _Link_type _p = _root;
         while (_p != NULL && _KeyOfValue()(_x) != _S_key(_p)) {
             if (key_comp(_KeyOfValue()(_x), _S_key(_p)))
@@ -362,7 +373,6 @@ protected:
         }
     }
 
-
     void _destroy(_Link_type _r) {
         if (_r) {
             _destroy(_r->_left);
@@ -373,41 +383,40 @@ protected:
     }
 
 public:
-    _AVL()
-        : _node_count(0),
-          _root(NULL),
-          key_comp(_Compare()) {}
+    _AVL() : _node_count(0), _root(NULL), key_comp(_Compare()) {}
     ~_AVL() { _destroy(_root); }
 
-    _AVL(const _AVL& _rhs)
-    {
+    _AVL(const _AVL& _rhs) {
         _node_count = 0;
         _root = NULL;
-        key_comp(_rhs.key_comp());
-        for (Iterator _it = _rhs.begin(); _it != _rhs.end; ++_it)
+        key_comp = _rhs.key_comp;
+        for (Const_iterator _it = _rhs.begin(); _it != _rhs.end(); ++_it)
             _insert_unique(*_it);
     }
 
-    _AVL& operator=(const _AVL& _rhs)
-    {
-        _AVL _copy = _rhs;
-        numb::Swap(*this, _copy);
+    _AVL& operator=(const _AVL& _rhs) {
+        _AVL _copy(_rhs);
+        swap(_copy);
         return *this;
     }
 
+    void swap(_AVL& _rhs) {
+        using numb::Swap;
+        Swap(_node_count, _rhs._node_count);
+        Swap(_root, _rhs._root);
+        Swap(key_comp, _rhs.key_comp);
+    }
+
     template <typename _InputIterator>
-    _AVL(_InputIterator _first, _InputIterator _last)
-    {
+    _AVL(_InputIterator _first, _InputIterator _last) {
         _node_count = 0;
         _root = NULL;
-        for (; _first != _last; ++_first)
-            _insert_unique(*_first);
+        for (; _first != _last; ++_first) _insert_unique(*_first);
     }
 
     Iterator begin() throw() {
         _Link_type _leftmost = _root;
-        while (_leftmost->_left != NULL)
-            _leftmost = _leftmost->_left;
+        while (_leftmost->_left != NULL) _leftmost = _leftmost->_left;
         return Iterator(_leftmost);
     }
 
@@ -415,9 +424,8 @@ public:
 
     Const_iterator begin() const throw() {
         _Link_type _leftmost = _root;
-        while (_leftmost->_left != NULL)
-            _leftmost = _leftmost->_left;
-        return Const_iterator(static_cast<_Const_Link_type>(_leftmost));
+        while (_leftmost->_left != NULL) _leftmost = _leftmost->_left;
+        return Const_iterator(_leftmost);
     }
 
     Const_iterator end() const throw() { return Const_iterator(NULL); }
@@ -454,11 +462,9 @@ public:
         return Make_pair(_iter, true);
     }
 
-    size_type erase(const key_type& _x)
-    {
+    size_type erase(const key_type& _x) {
         _Link_type _del = _find(_x);
-        if (_del == NULL)
-            throw;
+        if (_del == NULL) throw;
         _Link_type _real;
         if (_del->_left == NULL || _del->_right == NULL)
             _real = _del;
@@ -470,8 +476,7 @@ public:
             _child = _real->_left;
         else
             _child = _real->_right;
-        if (_child != NULL)
-            _child->_parent = _real->_parent;
+        if (_child != NULL) _child->_parent = _real->_parent;
 
         if (_real->_parent == NULL)
             _root = _child;
@@ -482,8 +487,7 @@ public:
                 _real->_parent->_right = _child;
         }
 
-        if (_real != _del)
-            _del->_value_field = _real->_value_field;
+        if (_real != _del) _del->_value_field = _real->_value_field;
 
         _rebalance(_del->_parent);
         value_type _tmp = _S_value(_del);
@@ -492,16 +496,10 @@ public:
         return _tmp;
     }
 
-    Iterator find(const key_type& _x)
-    {
-        return Iterator(_find(_x));
-    }
-
+    Iterator find(const key_type& _x) { return Iterator(_find(_x)); }
 
     Iterator _insert_equal(const value_type& _x);
 };
 }
-
-
 
 #endif

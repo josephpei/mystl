@@ -131,10 +131,16 @@ public:
             push_front(*_iter);
     }
 
-    Forward_list& operator=(const Forward_list& _rhs) {
-        Forward_list _copy = _rhs;
-        numb::Swap(*this, _copy);
+    Forward_list& operator=(const Forward_list& rhs) {
+        Forward_list _copy = rhs;
+        swap(_copy);
         return *this;
+    }
+
+    void swap(const Forward_list& rhs) {
+        using numb::Swap;
+        Swap(_head, rhs._head);
+        Swap(_size, rhs._size);
     }
 
     Iterator begin() throw() { return Iterator(_head->_next); }

@@ -21,11 +21,15 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 9; ++i)
         s1.insert(ia[i]);
     std::cout << s1.find(6) << std::endl;
-    std::cout << s1.erase(5) << std::endl;
     numb::Set<int>::Iterator it = s1.begin();
     std::cout << "Set1: \n";
     for (; it != s1.end(); ++it)
         std::cout << *it << std::endl;
 
+    numb::Set<int> s2 = s1;
+    numb::Set<int>::Iterator it2 = s2.begin();
+    std::cout << "Set2: \n";
+    for (; it2 != s2.end(); ++it2)
+        std::cout << *it2 << std::endl;
     return 0;
 }

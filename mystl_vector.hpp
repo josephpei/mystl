@@ -43,8 +43,15 @@ public:
 
     Vector& operator=(const Vector& rhs) {
         Vector copy = rhs;
-        Swap(*this, copy);
+        Swap(copy);
         return *this;
+    }
+
+    void swap(const Vector& rhs) {
+        using numb::Swap;
+        Swap(_M_start, rhs._M_start);
+        Swap(_M_finish, rhs._M_finish);
+        Swap(_M_end_of_storage, rhs._M_end_of_storage);
     }
 
     template <typename _InputIterator>

@@ -156,10 +156,16 @@ public:
             push_back(*_iter);
     }
 
-    List& operator=(const List& _rhs) {
-        List _copy = _rhs;
-        numb::Swap(*this, _copy);
+    List& operator=(const List& rhs) {
+        List _copy = rhs;
+        swap(_copy);
         return *this;
+    }
+
+    void swap(const List& rhs) {
+        using numb::Swap;
+        Swap(_head, rhs._head);
+        Swap(_size, rhs._size);
     }
 
     Iterator begin() throw() { return Iterator(_head->_next); }
