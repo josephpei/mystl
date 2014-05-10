@@ -51,9 +51,9 @@ class Set {
             return Pair<Iterator, bool>(_p.first, _p.second);
         }
 
-        value_type erase(const key_type& _x)
+        void erase(const key_type& _x)
         {
-            return _M_t.erase(_x);
+            _M_t.erase(_x);
         }
 
         bool find(const key_type& _x)
@@ -62,6 +62,18 @@ class Set {
                 return true;
             return false;
         }
+
+        Iterator lower_bound(const key_type& _x)
+        { return _M_t.lower_bound(_x); }
+
+        Const_iterator lower_bound(const key_type& _x) const
+        { return _M_t.lower_bound(_x); }
+
+        Iterator upper_bound(const key_type& _x)
+        { return _M_t.upper_bound(_x); }
+
+        Const_iterator upper_bound(const key_type& _x) const
+        { return _M_t.upper_bound(_x); }
 };
 }
 

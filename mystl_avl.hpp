@@ -373,6 +373,59 @@ protected:
         }
     }
 
+    Iterator _lower_bound(const _Key& _k)
+    {
+        _Link_type _x = _root;
+        _Link_type _y = NULL;
+        while (_x != NULL) {
+            if (!key_comp(_S_key(_x), _k))
+                _y = _x, _x = _x->_left;
+            else
+                _x = _x->_right;
+        }
+        return Iterator(_y);
+    }
+
+    Const_iterator _lower_bound(const _Key& _k) const
+    {
+        _Link_type _x = _root;
+        _Link_type _y = NULL;
+        while (_x != NULL) {
+            if (!key_comp(_S_key(_x), _k))
+                _y = _x, _x = _x->_left;
+            else
+                _x = _x->_right;
+        }
+        return Const_iterator(_y);
+    }
+
+    Iterator _upper_bound(const _Key& _k)
+    {
+        _Link_type _x = _root;
+        _Link_type _y = NULL;
+        while (_x != NULL) {
+            if (key_comp(_k, _S_key(_x)))
+                _y = _x, _x = _x->_left;
+            else
+                _x = _x->_right;
+        }
+        return Iterator(_y);
+    }
+
+    Const_iterator _upper_bound(const _Key& _k) const
+    {
+        _Link_type _x = _root;
+        _Link_type _y = NULL;
+        while (_x != NULL) {
+            if (key_comp(_k, _S_key(_x)))
+                _y = _x, _x = _x->_left;
+            else
+                _x = _x->_right;
+        }
+        return Const_iterator(_y);
+    }
+
+
     void _destroy(_Link_type _r) {
         if (_r) {
             _destroy(_r->_left);
@@ -413,6 +466,8 @@ public:
         _root = NULL;
         for (; _first != _last; ++_first) _insert_unique(*_first);
     }
+
+    _Compare key_compare() { return key_comp; }
 
     Iterator begin() throw() {
         _Link_type _leftmost = _root;
@@ -462,14 +517,22 @@ public:
         return Make_pair(_iter, true);
     }
 
-    size_type erase(const key_type& _x) {
+    Iterator _insert_unique(Const_iterator _pos, const value_type& _x) {
+        // need impl
+        return Iterator(NULL);
+    }
+
+
+    void erase(const key_type& _x) {
         _Link_type _del = _find(_x);
-        if (_del == NULL) throw;
+        if (_del == NULL) return;
         _Link_type _real;
         if (_del->_left == NULL || _del->_right == NULL)
             _real = _del;
         else
             _real = _succ(_del);
+
+        if (_real != _del) _del->_value_field = _real->_value_field;
 
         _Link_type _child;
         if (_real->_left != NULL)
@@ -485,18 +548,27 @@ public:
                 _real->_parent->_left = _child;
             else
                 _real->_parent->_right = _child;
+            _setHeight(_real->_parent);
+            _rebalance(_real->_parent);
         }
 
-        if (_real != _del) _del->_value_field = _real->_value_field;
-
-        _rebalance(_del->_parent);
-        value_type _tmp = _S_value(_del);
         delete _real;
         --_node_count;
-        return _tmp;
     }
 
     Iterator find(const key_type& _x) { return Iterator(_find(_x)); }
+
+    Iterator lower_bound(const key_type& _x)
+    { return _lower_bound(_x); }
+
+    Const_iterator lower_bound(const key_type& _x) const
+    { return _lower_bound(_x); }
+
+    Iterator upper_bound(const key_type& _x)
+    { return _upper_bound(_x); }
+
+    Const_iterator upper_bound(const key_type& _x) const
+    { return _upper_bound(_x); }
 
     Iterator _insert_equal(const value_type& _x);
 };
