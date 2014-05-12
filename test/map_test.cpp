@@ -30,18 +30,20 @@ void Shuffle(T *a, size_t sz)
 
 int main(int argc, char *argv[])
 {
-    numb::Map<int, char> m;
+    numb::Map<int, int> m;
 
-    int ia[100];
+    int ia[N];
     for (int i = 0; i < N; ++i)
         ia[i] = i;
-    Shuffle(ia, 100);
+    Shuffle(ia, N);
 
     for (int i = 0; i < N; ++i)
-        m[ia[i]] = (char)i;
+        m[ia[i]] = i;
 
-    for (int i = 0; i < N; ++i)
-        std::cout << m[i] << ' ';
+    m.erase(3);
+
+    for (numb::Map<int, int>::Iterator it = m.begin(); it != m.end(); ++it)
+        std::cout << (*it).second << ' ';
 
     std::cout << std::endl;
     return 0;

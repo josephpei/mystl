@@ -499,7 +499,7 @@ public:
             else if (key_comp(_S_key(_p), _KeyOfValue()(_x)))
                 _p = _p->_right;
             else
-                return Make_pair(Iterator(NULL), false);
+                return Make_pair(Iterator(_p), false);
         }
         _Link_type _cur = new _avl_node<value_type>(_x, _hot);
         if (_hot == NULL)
@@ -517,12 +517,6 @@ public:
         return Make_pair(_iter, true);
     }
 
-    Iterator _insert_unique(Const_iterator _pos, const value_type& _x) {
-        // need impl
-        return Iterator(NULL);
-    }
-
-
     void erase(const key_type& _x) {
         _Link_type _del = _find(_x);
         if (_del == NULL) return;
@@ -532,7 +526,11 @@ public:
         else
             _real = _succ(_del);
 
-        if (_real != _del) _del->_value_field = _real->_value_field;
+        if (_real != _del) {
+			key_type* _tmp = const_cast<key_type*>(&_del->_value_field.first);
+			*_tmp = _real->_value_field.first;
+			_del->_value_field.second = _real->_value_field.second;
+		}
 
         _Link_type _child;
         if (_real->_left != NULL)

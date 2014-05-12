@@ -1,6 +1,7 @@
 #ifndef _MYSTL_MAP_H
 #define _MYSTL_MAP_H
 #include "mystl_avl.hpp"
+#include "mystl_rbtree.hpp"
 #include "mystl_algobase.hpp"
 #include "mystl_pair.hpp"
 
@@ -27,7 +28,8 @@ class Map {
         };
 
     private:
-        typedef _AVL<key_type, value_type, _Select1st<value_type>, key_compare> _Rep_type;
+        //typedef _AVL<key_type, value_type, _Select1st<value_type>, key_compare> _Rep_type;
+        typedef _RBtree<key_type, value_type, _Select1st<value_type>, key_compare> _Rep_type;
         _Rep_type _M_t;
 
     public:
@@ -63,13 +65,8 @@ class Map {
 
         mapped_type& operator[](const key_type& _k)
         {
-            Iterator _i = lower_bound(_k);
-            Pair<Iterator, bool> _j;
-            if (_i == end() || key_comp()(_k, (*_i).first)) {
-                _j = insert(value_type(_k, mapped_type()));
-                _i = _j.first;
-            }
-            return (*_i).second;
+            Pair<Iterator, bool> _j = insert(value_type(_k, mapped_type()));
+            return (*(_j.first)).second;
         }
 
         Iterator lower_bound(const key_type& _k)
@@ -96,6 +93,9 @@ class Map {
 
         Pair<Iterator, bool> insert(const value_type& _x)
         { return _M_t._insert_unique(_x); }
+
+        void erase(const key_type& _x)
+        { return _M_t.erase(_x); }
 
         key_compare key_comp() const
         { return key_compare(); }
